@@ -1,0 +1,7 @@
+/server/node_modules
+/server/.env
+/server/log
+/server/yarn.lock
+/client/yarn.lock
+/client/.expo
+/client/node_modules
