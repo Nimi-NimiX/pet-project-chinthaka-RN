@@ -5,3 +5,4 @@
 /client/yarn.lock
 /client/.expo
 /client/node_modules
+/client/.env
