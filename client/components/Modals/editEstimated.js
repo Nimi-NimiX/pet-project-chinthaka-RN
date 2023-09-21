@@ -3,6 +3,7 @@ import { View, StyleSheet, Modal } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
 import budget from '../../APIs/budget';
 import Store from '../../store/Store';
+import * as constants from '../../constants';
 
 const MonthYearPicker = (props) => {
   const [estimated, setEstimated] = useState('');
@@ -47,8 +48,12 @@ const MonthYearPicker = (props) => {
     >
       <View style={styles.centeredView}>
         <View style={styles.container}>
-          <Text>Set Estimated Budget</Text>
+          <Text style={styles.text}>
+            Set Estimated Budget {'\n'}
+            {constants.months[store.month]} {store.year}
+          </Text>
           <TextInput
+            mode="outlined"
             label={'Estimated Budget'}
             value={estimated}
             onChangeText={setEstimated}
@@ -90,6 +95,11 @@ const styles = StyleSheet.create({
     gap: 20,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  text: {
+    fontSize: 15,
+    lineHeight: 25,
+    textAlign: 'center',
   },
   btn: {
     width: 100,
