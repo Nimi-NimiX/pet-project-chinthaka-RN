@@ -12,6 +12,10 @@ function useStore() {
 
   // recalculate the budget when transactions change
   useEffect(() => {
+    if (!budget || !transactions) {
+      return;
+    }
+
     const budgetCopy = { ...budget };
     const transactionsCopy = [...transactions];
 
