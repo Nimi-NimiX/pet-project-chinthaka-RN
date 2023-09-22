@@ -12,6 +12,10 @@ function useStore() {
 
   // recalculate the budget when transactions change
   useEffect(() => {
+    if (!budget || !transactions) {
+      return;
+    }
+
     const budgetCopy = { ...budget };
     const transactionsCopy = [...transactions];
 
@@ -39,6 +43,31 @@ function useStore() {
     setTransactions(transactionsCopy);
   }
 
+  function deleteTransaction(id) {
+    const transactionsCopy = [...transactions];
+    const transactionIndex = transactionsCopy.findIndex(
+      (transaction) => transaction.id === id
+    );
+    transactionsCopy.splice(transactionIndex, 1);
+    setTransactions(transactionsCopy);
+  }
+
+  function updateTransaction(updatedTransaction) {
+    const transactionsCopy = [...transactions];
+    const transactionIndex = transactionsCopy.findIndex(
+      (transaction) => transaction.id === updatedTransaction.id
+    );
+    transactionsCopy[transactionIndex].amount = Number(
+      updatedTransaction.amount
+    );
+    transactionsCopy[transactionIndex].remarks = updatedTransaction.remarks;
+    transactionsCopy[transactionIndex].categoryId = Number(
+      updatedTransaction.categoryId
+    );
+
+    setTransactions(transactionsCopy);
+  }
+
   return {
     month,
     setMonth,
@@ -52,6 +81,8 @@ function useStore() {
     transactions,
     setTransactions,
     addTransaction,
+    deleteTransaction,
+    updateTransaction,
   };
 }
 
