@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createContainer } from 'unstated-next';
 import * as constants from '../constants';
 
@@ -10,11 +10,33 @@ function useStore() {
   const [categories, setCategories] = useState([]);
   const [transactions, setTransactions] = useState([]);
 
-  // this function adds transaction to existing list
-  function addTransaction(transaction) {
-    const newTransaction = [...transactions, transaction];
-    setTransactions(newTransaction);
-    setBudget(reCalculateBudget(newTransaction, budget));
+  // recalculate the budget when transactions change
+  useEffect(() => {
+    const budgetCopy = { ...budget };
+    const transactionsCopy = [...transactions];
+
+    let totalIncome = 0;
+    let totalExpense = 0;
+
+    for (let transaction of transactionsCopy) {
+      if (transaction.type === constants.types.INCOME) {
+        totalIncome += transaction.amount;
+      } else {
+        totalExpense += transaction.amount;
+      }
+    }
+
+    budgetCopy.income = totalIncome;
+    budgetCopy.expense = totalExpense;
+    budgetCopy.balance = totalIncome - totalExpense;
+
+    setBudget(budgetCopy);
+  }, [transactions]);
+
+  function addTransaction(newTransaction) {
+    const transactionsCopy = [...transactions];
+    transactionsCopy.push(newTransaction);
+    setTransactions(transactionsCopy);
   }
 
   return {
@@ -34,23 +56,3 @@ function useStore() {
 }
 
 export default createContainer(useStore);
-
-// this function takes in a list of transactions and calculate the budget then return the new budget
-function reCalculateBudget(newTransaction, budget) {
-  let totalIncome = 0;
-  let totalExpense = 0;
-
-  newTransaction.forEach((transaction) => {
-    if (transaction.type === constants.types.INCOME) {
-      totalIncome += transaction.amount;
-    } else {
-      totalExpense += transaction.amount;
-    }
-  });
-
-  budget.income = totalIncome;
-  budget.expense = totalExpense;
-  budget.balance = totalIncome - totalExpense;
-
-  return budget;
-}

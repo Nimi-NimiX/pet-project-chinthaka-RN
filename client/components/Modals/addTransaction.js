@@ -15,14 +15,14 @@ const AddTransaction = (props) => {
   const categories = store.categories;
   const [filteredCategories, setFilteredCategories] = useState([]);
 
-  const [showCaldender, setShowCaldender] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   //states for form
   const [adding, setAdding] = useState(false); // to show loading indicator
   const initialState = {
     type: constants.types.EXPENSE,
     amount: '0',
-    date: new Date(),
+    date: new Date(year, month, 1),
     categoryId: categories.filter(
       (el) => el.categoryType === constants.types.EXPENSE
     )[0]?.id,
@@ -37,9 +37,14 @@ const AddTransaction = (props) => {
 
   // filter categories based on type
   useEffect(() => {
-    setFilteredCategories(
-      categories.filter((category) => category.categoryType === form.type)
+    const filteredCategories = categories.filter(
+      (category) => category.categoryType === form.type
     );
+    setFilteredCategories(filteredCategories);
+    setForm({
+      ...form,
+      categoryId: filteredCategories[0]?.id,
+    });
   }, [form.type, categories]);
 
   // hide modal function
@@ -116,16 +121,18 @@ const AddTransaction = (props) => {
               style={{ width: 200 }}
               mode="outlined"
               value={new Date(form.date).toLocaleDateString()}
-              onPressIn={() => setShowCaldender(true)}
+              onPressIn={() => setShowCalendar(true)}
               showSoftInputOnFocus={false}
             />
-            {showCaldender && (
+            {showCalendar && (
               <DateTimePicker
                 value={form.date}
+                minimumDate={new Date(year, month, 1)}
+                maximumDate={new Date(year, month + 1, 0)}
                 mode={'date'}
                 display="default"
                 onChange={(event, selectedDate) => {
-                  setShowCaldender(false);
+                  setShowCalendar(false);
                   setForm({ ...form, date: selectedDate });
                 }}
               />
@@ -176,7 +183,7 @@ const AddTransaction = (props) => {
               {adding ? (
                 <ActivityIndicator size="small" color="blue" />
               ) : (
-                <Text onPress={AddTransaction}>Add</Text>
+                <Text>Add</Text>
               )}
             </TouchableOpacity>
           </View>
